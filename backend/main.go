@@ -47,6 +47,6 @@ func main() {
 		})
 	})
 
-	// Listen and serve on 0.0.0.0:8000
-	router.Run(":8000")
+	// Listen and serve on 0.0.0.0:8001
+	router.Run(":8001")
 }
