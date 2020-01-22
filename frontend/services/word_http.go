@@ -2,12 +2,14 @@ package services
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"sinistra/deltatre/models"
 	"time"
+
+	"sinistra/deltatre/models"
 )
 
 type WordService struct{}
@@ -15,7 +17,14 @@ type WordService struct{}
 func (w WordService) GetWord(search string) (models.Word, error) {
 
 	var word models.Word
+	log.Println(search)
+	method := "GET"
+	url := fmt.Sprintf("http://localhost:8001/api/v1/search/%s", search)
 
+	response, err := httpRequest(method, url, nil)
+	if err != nil {
+		return models.Word{}, err
+	}
 	return word, nil
 }
 
