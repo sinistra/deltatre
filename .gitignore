@@ -1,3 +1,5 @@
 .idea
 .vscode
 /backend/backend
+
+.DS_Store
