@@ -28,10 +28,10 @@ func (w WordService) GetWords() ([]models.Word, error) {
 
 func (w WordService) GetWord(search string) (models.Word, error) {
 
-	log.Println(search)
+	// log.Println(search)
 	for i, word := range Words {
 		if word.Text == search {
-			log.Println("match against ", search)
+			// log.Println("match against ", search)
 			Words[i].Count++
 			word.Count++
 			return word, nil
@@ -62,7 +62,7 @@ func (w WordService) TopWords() ([]models.Word, error) {
 	sort.SliceStable(Words, func(i, j int) bool {
 		return Words[i].Count > Words[j].Count
 	})
-	fmt.Println(Words)
+	// fmt.Println(Words)
 
 	return Words[:5], nil
 }
