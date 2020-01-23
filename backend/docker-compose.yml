@@ -1,0 +1,7 @@
+version: '2'
+
+services:
+  backend:
+    image: backend:latest
+    ports:
+      - "8001:8001"

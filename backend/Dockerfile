@@ -11,12 +11,10 @@ COPY . .
 RUN go get -d -v ./...
 
 #Test the Go app
-#RUN go test .
 RUN go test -c ./services
 
 # Build the Go app
-# RUN CGO_ENABLED=0 GOOS=linux go build -a -o /app .
-RUN go build .
+RUN CGO_ENABLED=0 go build -a -o /out/backend .
 
 
 ######## Start a new stage from scratch #######
@@ -24,7 +22,7 @@ FROM scratch
 
 # copy app into build
 WORKDIR /
-COPY --from=builder /app .
+COPY --from=builder /out/backend .
 # COPY ./.env .
 # COPY run.sh .
 
