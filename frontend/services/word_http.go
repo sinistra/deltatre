@@ -81,7 +81,6 @@ func (w WordService) TopWords() ([]models.Word, int, error) {
 	var words []models.Word
 
 	url := fmt.Sprintf("%s/top", os.Getenv("BACKEND_HOST"))
-	log.Println(url)
 	responseBody, statusCode, err := httpRequest(http.MethodGet, url, nil)
 	if err != nil {
 		log.Println(statusCode, err)
