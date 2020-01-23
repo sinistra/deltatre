@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"sinistra/deltatre/backend/models"
+	"github.com/sinistra/deltatre/backend/models"
 )
 
 func TestWordService_AddWord(t *testing.T) {
@@ -100,8 +100,9 @@ func TestWordService_GetWords(t *testing.T) {
 				{"list", 0},
 				{"search", 0},
 				{"filter", 0},
-				{"yes", 0},
+				{"yes", 1},
 				{"no", 0},
+				{"orange", 0},
 			},
 			wantErr: false,
 		},
@@ -130,11 +131,11 @@ func TestWordService_TopWords(t *testing.T) {
 		{
 			name: "TopWords",
 			want: []models.Word{
+				{"yes", 1},
 				{"hello", 0},
 				{"goodbye", 0},
 				{"simple", 0},
 				{"list", 0},
-				{"search", 0},
 			},
 			wantErr: false,
 		},

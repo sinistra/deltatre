@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"sinistra/deltatre/backend/services"
+	"github.com/sinistra/deltatre/backend/services"
 )
 
 type WordController struct{}

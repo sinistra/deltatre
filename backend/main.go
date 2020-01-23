@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"sinistra/deltatre/backend/controllers"
+	"github.com/sinistra/deltatre/backend/controllers"
 )
 
 func main() {

@@ -3,10 +3,9 @@ package services
 import (
 	"errors"
 	"fmt"
-	"log"
 	"sort"
 
-	"sinistra/deltatre/backend/models"
+	"github.com/sinistra/deltatre/backend/models"
 )
 
 var Words = []models.Word{
@@ -46,7 +45,7 @@ func (w WordService) GetWord(search string) (models.Word, error) {
 func (w WordService) AddWord(newWord string) (models.Word, error) {
 	for _, word := range Words {
 		if word.Text == newWord {
-			log.Println("word exists ", newWord)
+			// log.Println("word exists ", newWord)
 			err := errors.New(fmt.Sprintf("%s is already in the list", newWord))
 			return models.Word{}, err
 		}
