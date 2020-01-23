@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/sinistra/deltatre/frontend/models"
@@ -16,12 +17,10 @@ import (
 
 type WordService struct{}
 
-var host = "http://localhost:8001/api/v1"
-
 func (w WordService) GetWord(search string) (models.Word, int, error) {
 
 	var word models.Word
-	url := fmt.Sprintf("%s/search/%s", host, search)
+	url := fmt.Sprintf("%s/search/%s", os.Getenv("BACKEND_HOST"), search)
 
 	responseBody, statusCode, err := httpRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -51,7 +50,7 @@ func (w WordService) GetWord(search string) (models.Word, int, error) {
 func (w WordService) AddWord(newWord string) (models.Word, int, error) {
 
 	var word models.Word
-	url := fmt.Sprintf("%s/add/%s", host, newWord)
+	url := fmt.Sprintf("%s/add/%s", os.Getenv("BACKEND_HOST"), newWord)
 
 	responseBody, statusCode, err := httpRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -81,8 +80,8 @@ func (w WordService) AddWord(newWord string) (models.Word, int, error) {
 func (w WordService) TopWords() ([]models.Word, int, error) {
 	var words []models.Word
 
-	url := fmt.Sprintf("%s/top", host)
-
+	url := fmt.Sprintf("%s/top", os.Getenv("BACKEND_HOST"))
+	log.Println(url)
 	responseBody, statusCode, err := httpRequest(http.MethodGet, url, nil)
 	if err != nil {
 		log.Println(statusCode, err)

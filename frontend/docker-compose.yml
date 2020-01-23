@@ -1,0 +1,7 @@
+version: '2'
+
+services:
+  frontend:
+    image: frontend:latest
+    ports:
+      - "8000:8000"
