@@ -2,6 +2,8 @@ package services
 
 import (
 	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -9,37 +11,95 @@ import (
 	"net/http"
 	"time"
 
-	"sinistra/deltatre/models"
+	"github.com/sinistra/deltatre/frontend/models"
 )
 
 type WordService struct{}
 
-func (w WordService) GetWord(search string) (models.Word, error) {
+var host = "http://localhost:8001/api/v1"
+
+func (w WordService) GetWord(search string) (models.Word, int, error) {
 
 	var word models.Word
-	log.Println(search)
-	method := "GET"
-	url := fmt.Sprintf("http://localhost:8001/api/v1/search/%s", search)
+	url := fmt.Sprintf("%s/search/%s", host, search)
 
-	response, err := httpRequest(method, url, nil)
+	responseBody, statusCode, err := httpRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return models.Word{}, err
+		log.Println(statusCode, err)
+		return models.Word{}, statusCode, err
 	}
-	return word, nil
+
+	var apiResponse models.ApiResponse
+	err = json.Unmarshal(responseBody, &apiResponse)
+	if err != nil {
+		log.Println(err)
+		return word, http.StatusInternalServerError, err
+	}
+
+	// spew.Dump(apiResponse)
+	if len(apiResponse.Error) > 0 {
+		err = errors.New(apiResponse.Error)
+		return models.Word{}, statusCode, err
+	}
+
+	word.Text = apiResponse.Data.Text
+	word.Count = apiResponse.Data.Count
+
+	return word, statusCode, nil
 }
 
-func (w WordService) AddWord(word models.Word) (models.Word, error) {
+func (w WordService) AddWord(newWord string) (models.Word, int, error) {
 
-	return word, nil
+	var word models.Word
+	url := fmt.Sprintf("%s/add/%s", host, newWord)
+
+	responseBody, statusCode, err := httpRequest(http.MethodGet, url, nil)
+	if err != nil {
+		log.Println(statusCode, err)
+		return models.Word{}, statusCode, err
+	}
+
+	var apiResponse models.ApiResponse
+	err = json.Unmarshal(responseBody, &apiResponse)
+	if err != nil {
+		log.Println(err)
+		return word, http.StatusInternalServerError, err
+	}
+
+	// spew.Dump(apiResponse)
+	if len(apiResponse.Error) > 0 {
+		err = errors.New(apiResponse.Error)
+		return models.Word{}, statusCode, err
+	}
+
+	word.Text = apiResponse.Data.Text
+	word.Count = apiResponse.Data.Count
+
+	return word, statusCode, nil
 }
 
-func (w WordService) TopWords(count int) ([]models.Word, error) {
+func (w WordService) TopWords() ([]models.Word, int, error) {
 	var words []models.Word
 
-	return words, nil
+	url := fmt.Sprintf("%s/top", host)
+
+	responseBody, statusCode, err := httpRequest(http.MethodGet, url, nil)
+	if err != nil {
+		log.Println(statusCode, err)
+		return words, statusCode, err
+	}
+
+	var topResponse models.TopResponse
+	err = json.Unmarshal(responseBody, &topResponse)
+	if err != nil {
+		log.Println(err)
+		return words, http.StatusInternalServerError, err
+	}
+
+	return topResponse.Data, statusCode, nil
 }
 
-func httpRequest(method, url string, body []byte) ([]byte, error) {
+func httpRequest(method, url string, body []byte) ([]byte, int, error) {
 	var bodyBuffer io.Reader
 	if len(body) > 0 {
 		bodyBuffer = bytes.NewBuffer(body)
@@ -51,22 +111,21 @@ func httpRequest(method, url string, body []byte) ([]byte, error) {
 	request, err := http.NewRequest(method, url, bodyBuffer)
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return nil, http.StatusInternalServerError, err
 	}
 
-	request.Header.Set("Content-Type", "application/vnd.api+json")
-	request.Header.Set("x-api-key", "ITG.9248ce9dc72946701df7119f02f9ca1e.Xo_Qgyy6ER1uJkAKpCoUo-uvSiXHgD6vtQFh0X1MUmpp35gtdMco7BnEkB3d_726")
+	request.Header.Set("Content-Type", "application/json")
 
 	response, err := client.Do(request)
 	if err != nil {
-		log.Println(err)
-		return nil, err
+		log.Println(response.StatusCode, err)
+		return nil, response.StatusCode, err
 	}
 	defer response.Body.Close()
 	body, err = ioutil.ReadAll(response.Body)
 	if err != nil {
-		log.Println(err)
-		return nil, err
+		log.Println(response.StatusCode, err)
+		return nil, response.StatusCode, err
 	}
-	return body, nil
+	return body, response.StatusCode, nil
 }
