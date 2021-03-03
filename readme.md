@@ -27,4 +27,4 @@ The following URLs are available on backend;
 The frontend communicates with the backend using a Docker hostname that is stored in an environment variable in the frontend container.
 
 The communication between the containers is via REST (not gRPC). 
-I am familiar with the theory of gRPC but have not used it sufficiently to justify use in this project.
+gRPC is great for service to service (back-end) communication, but REST is still required for front-end applications.
